@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BridgeUp App</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Vue -->
+  <script src="https://unpkg.com/vue@3"></script>
+
+  <style>
+    body {
+      background: #f5f7fb;
+    }
+  </style>
+</head>
+
+<body>
+<div id="app" class="max-w-md mx-auto min-h-screen bg-white shadow-xl">
+
+  <!-- Header -->
+  <div class="bg-blue-500 text-white p-4 text-lg font-bold text-center">
+    BridgeUp
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex justify-around bg-gray-100 p-2 text-sm">
+    <button @click="tab='events'" :class="tabClass('events')">活動</button>
+    <button @click="tab='points'" :class="tabClass('points')">積分</button>
+    <button @click="tab='finance'" :class="tabClass('finance')">記帳</button>
+    <button @click="tab='gifts'" :class="tabClass('gifts')">禮品</button>
+  </div>
+
+  <!-- Content -->
+  <div class="p-4 space-y-4">
+
+    <!-- 活動 -->
+    <div v-if="tab==='events'">
+      <div class="text-lg font-semibold mb-2">🎯 推薦活動</div>
+
+      <div v-for="event in events" class="bg-white p-4 rounded-2xl shadow">
+        <div class="font-bold text-blue-600">{{ event.name }}</div>
+        <div class="text-sm text-gray-500">{{ event.desc }}</div>
+        <button @click="join(event)"
+          class="mt-2 bg-orange-400 text-white px-3 py-1 rounded-full text-sm">
+          報名
+        </button>
+      </div>
+    </div>
+
+    <!-- 積分 -->
+    <div v-if="tab==='points'">
+      <div class="bg-blue-100 p-4 rounded-2xl text-center">
+        <div class="text-sm text-gray-600">目前積分</div>
+        <div class="text-3xl font-bold text-blue-600">{{ points }}</div>
+      </div>
+    </div>
+
+    <!-- 記帳 -->
+    <div v-if="tab==='finance'">
+      <div class="flex gap-2">
+        <input v-model="amount" placeholder="金額"
+          class="flex-1 border p-2 rounded-lg">
+        <button @click="addExpense"
+          class="bg-blue-500 text-white px-3 rounded-lg">加</button>
+      </div>
+
+      <div v-for="item in expenses" class="bg-white p-3 rounded-xl shadow mt-2">
+        $ {{ item }}
+      </div>
+    </div>
+
+    <!-- 禮品 -->
+    <div v-if="tab==='gifts'">
+      <div v-for="gift in gifts"
+        class="bg-white p-4 rounded-2xl shadow flex justify-between items-center">
+
+        <div>
+          <div class="font-bold">{{ gift.name }}</div>
+          <div class="text-sm text-gray-500">{{ gift.cost }} 分</div>
+        </div>
+
+        <button @click="redeem(gift)"
+          class="bg-orange-400 text-white px-3 py-1 rounded-full text-sm">
+          換領
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      tab: 'events',
+      points: 100,
+      amount: '',
+      expenses: [],
+      events: [
+        { name: '太極班（小班）', desc: '社區導師｜3人小組' },
+        { name: '手機教學（私人）', desc: '一對一教學' }
+      ],
+      gifts: [
+        { name: '超市券', cost: 50 },
+        { name: '按摩券', cost: 80 }
+      ]
+    }
+  },
+  methods: {
+    tabClass(t) {
+      return this.tab === t
+        ? 'text-blue-600 font-bold'
+        : 'text-gray-500';
+    },
+    join(event) {
+      alert('已報名 ' + event.name);
+      this.points += 10;
+    },
+    addExpense() {
+      if (this.amount) {
+        this.expenses.push(this.amount);
+        this.amount = '';
+      }
+    },
+    redeem(gift) {
+      if (this.points >= gift.cost) {
+        this.points -= gift.cost;
+        alert('成功換領 ' + gift.name);
+      } else {
+        alert('積分不足');
+      }
+    }
+  }
+}).mount('#app');
+</script>
+
+</body>
+</html>
